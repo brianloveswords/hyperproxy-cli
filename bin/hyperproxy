@@ -2,8 +2,17 @@
 require('colors')
 const util = require('util')
 const path = require('path')
-const configFile = process.argv[2] ||
+const argv = require('optimist').argv
+
+const configFile = argv._[0] ||
   path.join(process.cwd(), 'servers.json')
+
+const port = argv.p || argv.port
+
+if (!port) {
+  console.error('must specify a port with -p or --port')
+  process.exit(1)
+}
 
 try {
   const config = require(configFile)
@@ -17,7 +26,7 @@ const Hyperproxy = require('hyperproxy')
 const server =
   new Hyperproxy({ servers: config })
   .createServer()
-  .listen(80)
+  .listen(port)
 
 server.on('listening', function () {
   console.log('')

@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "colors": "~0.6.2",
-    "hyperproxy": "~0.3.0"
+    "hyperproxy": "~0.3.0",
+    "optimist": "~0.6.0"
   },
   "devDependencies": {},
   "scripts": {
