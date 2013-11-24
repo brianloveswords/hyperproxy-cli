@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+const socket = process.argv[2]
+if (!socket) {
+  console.log('must provide a socket')
+  process.exit(1)
+}
+
+const http = require('http')
+
+http.createServer(function (req, res) {
+  res.write('yeah of course')
+  res.end()
+}).listen(socket)

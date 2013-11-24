@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+require('colors')
+const util = require('util')
+const path = require('path')
+const configFile = process.argv[2] ||
+  path.join(process.cwd(), 'servers.json')
+
+try {
+  const config = require(configFile)
+} catch (e) {
+  console.error('could not open config file, %s', configFile)
+  process.exit(1)
+}
+
+const Hyperproxy = require('hyperproxy')
+
+const server =
+  new Hyperproxy({ servers: config })
+  .createServer()
+  .listen(80)
+
+server.on('listening', function () {
+  console.log('')
+  console.log(util.format('Listening on port %s, routing to server:', this.address().port).green)
+  console.log('------------------------------------------------------------------------'.cyan)
+  console.dir(config)
+  console.log('------------------------------------------------------------------------'.cyan)
+  console.log('')
+})
