@@ -1,8 +1,11 @@
 {
   "name": "hyperproxy-cli",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "A CLI for hyperproxy",
   "main": "index.js",
+  "bin": {
+    "hyperproxy": "./bin/hyperproxy"
+  },
   "dependencies": {
     "colors": "~0.6.2",
     "hyperproxy": "~0.3.0"
