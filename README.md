@@ -5,7 +5,7 @@ A simple CLI for <code>[hyperproxy](https://github.com/brianloveswords/hyperprox
 ## Usage
 
 ```bash
-$ hyperproxy <config-file>
+$ hyperproxy -p <port> <config-file>
 ```
 
 
