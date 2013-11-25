@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 require('colors')
+
+const pkg = require('../package')
 const util = require('util')
 const path = require('path')
 const argv = require('optimist').argv
@@ -32,8 +34,10 @@ const server =
   })
 
 
-
 server.on('listening', function () {
+  console.log('')
+  console.log(util.format('hyperproxy-cli v', pkg.version).bold)
+  console.log(util.format('hyperproxy v', Hyperproxy.VERSION).bold)
   console.log('')
   console.log(util.format('Listening on port %s, routing to server:', this.address().port).green)
   console.log('------------------------------------------------------------------------'.cyan)
