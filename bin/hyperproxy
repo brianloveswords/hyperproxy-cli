@@ -27,6 +27,11 @@ const server =
   new Hyperproxy({ servers: config })
   .createServer()
   .listen(port)
+  .on('proxyError', function (err) {
+    console.dir(err)
+  })
+
+
 
 server.on('listening', function () {
   console.log('')
