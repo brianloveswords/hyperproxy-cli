@@ -1,4 +1,0 @@
-[
-  ["localhost", "/tmp/localhost.socket"],
-  ["*.localhost", "/tmp/subdomain.socket"]
-]
