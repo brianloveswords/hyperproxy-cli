@@ -48,7 +48,7 @@ function reloadOnChange(proxy, file) {
     }
     proxy.changeUpstreams(config)
 
-    console.log('reloaded config'.green)
+    console.log('reloaded config'.grey)
     printConfig(config)
   })
 }
