@@ -1,47 +1,87 @@
 #!/usr/bin/env node
 require('colors')
 
+const Hyperproxy = require('hyperproxy')
+const fs = require('fs')
 const pkg = require('../package')
 const util = require('util')
 const path = require('path')
 const argv = require('optimist').argv
 
-const configFile = argv._[0] ||
-  path.join(process.cwd(), 'servers.json')
-
+const configfile = argv._[0] || path.join(process.cwd(), 'servers.json')
 const port = argv.p || argv.port
+const watchForChanges = argv.w || argv.watch
 
-if (!port) {
-  console.error('must specify a port with -p or --port')
+function printVersions() {
+  console.log('')
+  console.log(util.format('hyperproxy v%s', Hyperproxy.VERSION).bold)
+  console.log(util.format('hyperproxy-cli v%s', pkg.version).bold)
+  console.log('')
+}
+
+function loadConfig(file) {
+  try {
+    return JSON.parse(fs.readFileSync(file))
+  } catch (e) {
+    return false
+  }
+}
+
+function exitWithError() {
+  console.error.apply(console, arguments)
   process.exit(1)
 }
 
-try {
-  const config = require(configFile)
-} catch (e) {
-  console.error('could not open config file, %s', configFile)
-  process.exit(1)
-}
-
-const Hyperproxy = require('hyperproxy')
-
-const server =
-  new Hyperproxy({ servers: config })
-  .createServer()
-  .listen(port)
-  .on('proxyError', function (err) {
-    console.dir(err)
-  })
-
-
-server.on('listening', function () {
+function printConfig(config) {
   console.log('')
-  console.log(util.format('hyperproxy-cli v', pkg.version).bold)
-  console.log(util.format('hyperproxy v', Hyperproxy.VERSION).bold)
-  console.log('')
-  console.log(util.format('Listening on port %s, routing to server:', this.address().port).green)
-  console.log('------------------------------------------------------------------------'.cyan)
+  console.log('------------------------------Endpoints---------------------------------'.cyan)
   console.dir(config)
   console.log('------------------------------------------------------------------------'.cyan)
   console.log('')
-})
+}
+
+function reloadOnChange(proxy, file) {
+  fs.watch(file, function (event, filename) {
+    const config = loadConfig(file)
+    if (!config) {
+      console.error('could not parse new config'.red)
+      return false
+    }
+    proxy.changeUpstreams(config)
+
+    console.log('reloaded config'.green)
+    printConfig(config)
+  })
+}
+
+~function main(filename, port) {
+  printVersions()
+
+  const config = loadConfig(filename)
+
+  if (!config)
+    return exitWithError('could not open config file, %s', filename)
+
+  if (!port)
+    return exitWithError('must specify a port with -p or --port')
+
+  const proxy =new Hyperproxy({ servers: config })
+  const server = proxy.createServer()
+
+  server.listen(port)
+  server.on('proxyError', function (err) {
+    console.dir(err)
+  })
+
+  if (watchForChanges) {
+    console.log(('watching '+filename+' for changes\n').magenta)
+    reloadOnChange(proxy, configfile)
+  }
+
+  server.on('listening', function () {
+    const listeningPort = this.address().port
+    const message = util.format('Listening on port %s', listeningPort)
+    console.log(message.green)
+    printConfig(config)
+  })
+}(configfile, port)
