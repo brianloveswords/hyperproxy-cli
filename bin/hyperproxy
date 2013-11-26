@@ -7,6 +7,7 @@ const pkg = require('../package')
 const util = require('util')
 const path = require('path')
 const argv = require('optimist').argv
+const pretty = require('../lib/pretty-print')
 
 const configfile = argv._[0] || path.join(process.cwd(), 'servers.json')
 const port = argv.p || argv.port
@@ -34,9 +35,7 @@ function exitWithError() {
 
 function printConfig(config) {
   console.log('')
-  console.log('------------------------------Endpoints---------------------------------'.cyan)
-  console.dir(config)
-  console.log('------------------------------------------------------------------------'.cyan)
+  pretty(config)
   console.log('')
 }
 
@@ -74,7 +73,7 @@ function reloadOnChange(proxy, file) {
   })
 
   if (watchForChanges) {
-    console.log(('watching '+filename+' for changes\n').magenta)
+    console.log(('watching '+filename+' for changes\n').grey)
     reloadOnChange(proxy, configfile)
   }
 
