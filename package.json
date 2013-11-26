@@ -1,6 +1,6 @@
 {
   "name": "hyperproxy-cli",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "A CLI for hyperproxy",
   "main": "index.js",
   "bin": {
