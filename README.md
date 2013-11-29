@@ -8,8 +8,6 @@ A simple CLI for <code>[hyperproxy](https://github.com/brianloveswords/hyperprox
 $ hyperproxy [--watch] --port <port> <config-file>
 ```
 
-
-
 [See the hyperproxy documentation](https://github.com/brianloveswords/hyperproxy/blob/master/README.md) for more details about what should go into the config file, but it should look something like
 
 ```json
