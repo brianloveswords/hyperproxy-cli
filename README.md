@@ -5,17 +5,25 @@ A simple CLI for <code>[hyperproxy](https://github.com/brianloveswords/hyperprox
 ## Usage
 
 ```bash
-$ hyperproxy [--watch] --port <port> <config-file>
+$ hyperproxy [--watch] -p [http port] -s [https port] <config-file>
 ```
+
+`http port` and `https port` default to 80 and 443 respectively. A secure server will only be created if there are any HTTPS servers defined in the configuration, otherwise only a regular HTTP server will be created.
 
 [See the hyperproxy documentation](https://github.com/brianloveswords/hyperproxy/blob/master/README.md) for more details about what should go into the config file, but it should look something like
 
 ```json
-[
+{"servers": [
   [ "tau.example.org", ":1618" ],
   [ "pi.example.org", ":3141"  ],
-  [ "euler.example.org", ":2718" ]
-]
+  { "pattern": "euler.example.org",
+    "endpoint": ":2718",
+    "https": {
+      "key": "/path/to/euler-key.pem",
+      "cert": "/path/to/euler-cert.pem"
+    }
+  }
+]}
 ```
 
 ## License
