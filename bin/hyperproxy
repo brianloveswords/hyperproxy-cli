@@ -37,7 +37,7 @@ function exitWithError() {
 
 function printConfig(config) {
   console.log('')
-  pretty(config.servers)
+  pretty(config)
   console.log('')
 }
 
@@ -48,7 +48,7 @@ function reloadOnChange(proxy, file) {
       console.error('could not parse new config'.red)
       return false
     }
-    proxy.changeUpstreams(config)
+    proxy.changeConfig(config)
 
     console.log('reloaded config'.grey)
     printConfig(proxy.servers)
