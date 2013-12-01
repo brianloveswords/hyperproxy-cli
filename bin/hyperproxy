@@ -10,7 +10,8 @@ const argv = require('optimist').argv
 const pretty = require('../lib/pretty-print')
 
 const configfile = argv._[0] || path.join(process.cwd(), 'servers.json')
-const port = argv.p || argv.port
+const port = argv.p || argv.port || 80
+const securePort = argv.s || argv.secure || 443
 const watchForChanges = argv.w || argv.watch
 
 function printVersions() {
@@ -24,6 +25,7 @@ function loadConfig(file) {
   try {
     return JSON.parse(fs.readFileSync(file))
   } catch (e) {
+    console.dir(e)
     return false
   }
 }
@@ -64,10 +66,26 @@ function reloadOnChange(proxy, file) {
   if (!port)
     return exitWithError('must specify a port with -p or --port')
 
-  const proxy = new Hyperproxy({ servers: config })
+  const proxy = new Hyperproxy(config)
   const server = proxy.createServer()
 
-  server.listen(port)
+  if (proxy.https) {
+    const secureServer = proxy
+      .createSecureServer()
+      .listen(securePort, function () {
+        const listeningPort = this.address().port
+        const message = util.format('Listening for HTTPS on port %s', listeningPort)
+        console.log(message.green)
+      })
+  }
+
+  server.listen(port, function () {
+    const listeningPort = this.address().port
+    const message = util.format('Listening for HTTP on port %s', listeningPort)
+    console.log(message.green)
+    printConfig(proxy.servers)
+  })
+
   server.on('proxyError', function (err) {
     console.dir(err)
   })
@@ -76,11 +94,4 @@ function reloadOnChange(proxy, file) {
     console.log(('watching '+filename+' for changes\n').grey)
     reloadOnChange(proxy, configfile)
   }
-
-  server.on('listening', function () {
-    const listeningPort = this.address().port
-    const message = util.format('Listening on port %s', listeningPort)
-    console.log(message.green)
-    printConfig(proxy.servers)
-  })
 }(configfile, port)
