@@ -49,7 +49,7 @@ function reloadOnChange(proxy, file) {
     proxy.changeUpstreams(config)
 
     console.log('reloaded config'.grey)
-    printConfig(config)
+    printConfig(proxy.servers)
   })
 }
 
@@ -64,7 +64,7 @@ function reloadOnChange(proxy, file) {
   if (!port)
     return exitWithError('must specify a port with -p or --port')
 
-  const proxy =new Hyperproxy({ servers: config })
+  const proxy = new Hyperproxy({ servers: config })
   const server = proxy.createServer()
 
   server.listen(port)
@@ -81,6 +81,6 @@ function reloadOnChange(proxy, file) {
     const listeningPort = this.address().port
     const message = util.format('Listening on port %s', listeningPort)
     console.log(message.green)
-    printConfig(config)
+    printConfig(proxy.servers)
   })
 }(configfile, port)
