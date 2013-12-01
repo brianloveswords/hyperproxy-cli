@@ -37,7 +37,7 @@ function exitWithError() {
 
 function printConfig(config) {
   console.log('')
-  pretty(config)
+  pretty(config.servers)
   console.log('')
 }
 
