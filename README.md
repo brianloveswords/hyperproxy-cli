@@ -30,7 +30,7 @@ If you prefer a more human format, you can also use YAML:
 
 ```yaml
 servers:
-  - [ tau.example.org, :1618]
+  - [ tau.example.org, :1618 ]
   - [ pi.example.org, :3141 ]
   - pattern: euler.example.org
     endpoint: :2718
