@@ -8,6 +8,7 @@ const util = require('util')
 const path = require('path')
 const argv = require('optimist').argv
 const pretty = require('../lib/pretty-print')
+const YAML = require('js-yaml')
 
 const configfile = argv._[0] || path.join(process.cwd(), 'servers.json')
 const port = argv.p || argv.port || 80
@@ -21,13 +22,34 @@ function printVersions() {
   console.log('')
 }
 
-function loadConfig(file) {
+function loadJSON(file) {
   try {
     return JSON.parse(fs.readFileSync(file))
   } catch (e) {
     console.dir(e)
     return false
   }
+}
+function loadYAML(file) {
+  try {
+    return YAML.load(fs.readFileSync(file).toString('utf8'))
+  } catch (e) {
+    console.dir(e)
+    return false
+  }
+}
+
+function loadConfig(file) {
+  const parsers = {
+    json: loadJSON,
+    yaml: loadYAML,
+    yml: loadYAML,
+  }
+  const ext = path.extname(file).slice(1)
+  const parser = parsers[ext]
+  if (!parser)
+    throw new Error('could not find a parser for file type ' + ext)
+  return parser(file)
 }
 
 function exitWithError() {

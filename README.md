@@ -26,6 +26,20 @@ $ hyperproxy [--watch] -p [http port] -s [https port] <config-file>
 ]}
 ```
 
+If you prefer a more human format, you can also use YAML:
+
+```yaml
+servers:
+  - [ tau.example.org, :1618]
+  - [ pi.example.org, :3141 ]
+  - pattern: euler.example.org
+    endpoint: :2718
+    https:
+      key: /path/to/euler-key.pem
+      cert: /path/to/euler-cert.pem
+```
+
+
 ## License
 MIT
 
