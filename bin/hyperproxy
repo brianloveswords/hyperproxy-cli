@@ -109,7 +109,7 @@ function reloadOnChange(proxy, file) {
   })
 
   server.on('proxyError', function (err) {
-    console.dir(err)
+    console.error('proxy error', util.inspect(err))
   })
 
   if (watchForChanges) {
